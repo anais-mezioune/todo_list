@@ -1,0 +1,55 @@
+<!Doctype html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<title>TODO</title>
+		<style type="text/css" media="screen">
+			#liste_todo{
+				    clear: both;
+				    margin: 10px 0 15px 0;
+				    list-style-type: none;
+			}
+
+			#cpt{
+				float: left;
+				margin: 0;
+			}
+
+			#span_archiver{
+				display: none;
+				float: left;
+			}
+
+			#text_ajouter,
+			#ajouter,
+			#message_erreur{
+				float: left;
+			}
+
+			#message_erreur{
+				color: red;
+				margin-left: 5px;
+			}
+
+			#ajouter_tache{
+				height: 35px;
+			}
+		</style>
+	</head>
+	<body>
+		<h1>Gestionnaire de tâches</h1>
+		<section id="todo">
+			<section id="archiver_tache">
+				<span id='span_archiver'>[<input type="submit" name="Archiver" value="Archiver" id="archiver" />]</span>
+			</section>
+
+			<section id='ajouter_tache'>
+				<input type="text" name="nouvelleTache" placeholder="Ajouter une nouvelle tâche" id="text_ajouter" />
+				<input type="submit" name="Ajouter" value="Ajouter" id="ajouter" />
+			</section>
+		</section>
+
+		<script type="text/javascript" src="public/js/jquery-1.6.4.min.js"></script>
+		<script type="text/javascript" src="public/js/index.js"></script>
+	</body>
+</html>
