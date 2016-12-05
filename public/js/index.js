@@ -57,14 +57,14 @@
 		$('#liste_todo').insertBefore('#ajouter_tache');
 	}
 
-	function afficher_erreur(message){
+	function afficher_erreur(message, retour){
 		if(!$('#message_erreur')[0]) {
 			$('<span id="message_erreur">'+ message +'</span>').insertAfter('#ajouter');
 		} else {
 			$('#message_erreur').text(message);
 			$('#message_erreur').css('display', 'block');
 		}
-		return false;
+		return retour;
 	}
 
 	$("#ajouter").click(function(){
@@ -85,9 +85,9 @@
 						existence = true;
 
 						if($(this).css('display') === 'none'){
-							afficher_erreur("Cette tâche est déjà archivée !");
+							afficher_erreur("Cette tâche est déjà archivée !", "false");
 						} else{
-							afficher_erreur("Cette tâche est déjà dans la liste !");
+							afficher_erreur("Cette tâche est déjà dans la liste !", "false");
 						}
 					}
 				});
@@ -114,25 +114,23 @@
 		}
 
 		$('input:checked[name=taches]').each(function() {
-			var checkbox = $(this);
-			var checkbox_val = $(this).val();
-			var display = $(this).parent('li').css('display'); 
+			var checkbox_val = $(this).val(); 
 
-			if(display === 'none'){
+			if($(this).parent('li').css('display') === 'none'){
 				return;
 			} else{
 				$("#liste_done li").each(function() {
 					if( $(this).find("label").text().trim().split(" : ")[1] === checkbox_val){
 						existence = true;
-						alert('Cette tâche est déjà archivée 1 !');
-						return;
+						afficher_erreur("Cette tâche est déjà archivée !", "");
+						// alert('Cette tâche est déjà archivée 1 !');
+						// return;
 					} 
 				});
 
 				if(existence === false){
 					cpt++;
 					$(this).parent('li').css('display', 'none');
-				  	//afficher_cpt(compter_li('liste_todo')); console.log('if : '+ compter_li('liste_todo'));
 				  	ajouter_tache(cpt, $(this).val(), 'liste_done');
 				}
 			}
