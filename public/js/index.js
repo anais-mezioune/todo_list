@@ -35,11 +35,11 @@
 		ajouter_details(id);
 		ajouter_label('Tâche '+ numero +' : '+ tache +' ', id);
 		ajouter_checkbox(id, tache);
-		afficher_cpt(numero);
+		afficher_cpt(compter_li(id));
 	}
 
 	function compter_li(id){
-		return $("#"+ id +" li:visible").length;
+		return $("#liste_todo li:visible").length;
 	}
 
 	function ajouter_cpt(){
@@ -52,6 +52,7 @@
 			$('#archiver_tache').css('height', '30px');
 		}
 		$('#cpt').text('Sur '+ cpt +' restante(s)');
+		console.log('afficher_cpt : '+ cpt);
 		$('#span_archiver').css('display', 'block');
 		$('#liste_todo').insertBefore('#ajouter_tache');
 	}
@@ -79,7 +80,7 @@
 			if($('#liste_todo')[0]) {
 				var cpt = compter_li('liste_todo')+1;
 
-				$("li").each(function(i){
+				$("#liste_todo li").each(function(i){
 					if( $(this).find("label").text().trim().split(" : ")[1] === nouvelleTache ){
 						existence = true;
 
@@ -115,26 +116,25 @@
 		$('input:checked[name=taches]').each(function() {
 			var checkbox = $(this);
 			var checkbox_val = $(this).val();
-			alert('checkbox : '+checkbox_val);
+			var display = $(this).parent('li').css('display'); 
 
-			$("#liste_done li").each(function() {
-				alert('liste_done : '+$(this).find("label").text().trim().split(" : ")[1]);
+			if(display === 'none'){
+				return;
+			} else{
+				$("#liste_done li").each(function() {
+					if( $(this).find("label").text().trim().split(" : ")[1] === checkbox_val){
+						existence = true;
+						alert('Cette tâche est déjà archivée 1 !');
+						return;
+					} 
+				});
 
-				if( $(this).find("label").text().trim().split(" : ")[1] === checkbox_val){
-					alert('Cette tâche est déjà archivée !');
-					existence = true;
-				} else {
-					/*cpt++;
-					checkbox.parent('li').css('display', 'none');
-					afficher_cpt(compter_li('liste_todo'));
-			  		ajouter_tache(cpt, checkbox_val, 'liste_done');*/
+				if(existence === false){
+					cpt++;
+					$(this).parent('li').css('display', 'none');
+				  	//afficher_cpt(compter_li('liste_todo')); console.log('if : '+ compter_li('liste_todo'));
+				  	ajouter_tache(cpt, $(this).val(), 'liste_done');
 				}
-			});
-			if(existence === false){
-				cpt++;
-				$(this).parent('li').css('display', 'none');
-			  	afficher_cpt(compter_li('liste_todo'));
-			  	ajouter_tache(cpt, $(this).val(), 'liste_done');
 			}
 		});
 	});
