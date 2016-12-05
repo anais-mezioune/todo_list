@@ -1,13 +1,15 @@
 (function($){
 
-	function ajouter_ul(id, titre){
+	function ajouter_ul(id, titre, id_prepend){
 		if(id === 'liste_todo'){
 			$('<ul id="'+ id +'"></ul>').insertBefore('#ajouter_tache');
 		} else {
-			$('<section id="taches_archivees"></ul>').insertAfter('#ajouter_tache');
-			$('#taches_archivees').prepend('<ul id="'+ id +'"></ul>');
+			$('<section id="done"></ul>').insertAfter('#todo');
+			$('#done').prepend('<ul id="'+ id +'"></ul>');
+			$('#done').prepend('<section id="basculer_tache"></section>');
 		}
-		$('<h2>Liste des tâches '+ titre +'</h2>').insertBefore('#'+ id);
+		ajouter_cpt(id, id_prepend);
+		$('<h2>Liste des tâches '+ titre +'</h2>').insertBefore('#cpt_'+ id);
 	}
 
 	function ajouter_li(id){
@@ -30,31 +32,36 @@
 		li.prepend('<input type="checkbox" name="taches" value="'+ valeur +'" />');
 	}
 
-	function ajouter_tache(numero, tache, id){
+	function ajouter_tache(numero, tache, id, id_cpt, id_prepend){
 		ajouter_li(id);
 		ajouter_details(id);
 		ajouter_label('Tâche '+ numero +' : '+ tache +' ', id);
 		ajouter_checkbox(id, tache);
-		afficher_cpt(compter_li(id));
+		afficher_cpt(compter_li(id_cpt), id_cpt, id_prepend);
 	}
 
 	function compter_li(id){
-		return $("#liste_todo li:visible").length;
+		return $("#"+ id +" li:visible").length;
 	}
 
-	function ajouter_cpt(){
-		$('<p id="cpt"></p>').prependTo('#archiver_tache');
+	function ajouter_cpt(id_cpt, id_prepend){
+		$('<p id="cpt_'+ id_cpt +'" class="cpt"></p>').prependTo('#'+ id_prepend);
 	}
 
-	function afficher_cpt(cpt){
-		if( !$('#cpt')[0] ){
-			ajouter_cpt();
-			$('#archiver_tache').css('height', '30px');
+	function afficher_cpt(cpt, id_cpt, id_prepend){
+		if(cpt != 0){
+			if( !$('#cpt_'+ id_cpt)[0] ){
+				ajouter_cpt(id_cpt, id_prepend);
+				$('#archiver_tache').css('height', '30px');
+			}
+			$('#cpt_'+ id_cpt).text( cpt +' tâche(s) restante(s)');
+			$('#cpt_'+ id_cpt).css('display', 'block');
+			$('#span_archiver').css('display', 'block');
+			$('#liste_todo').insertBefore('#ajouter_tache');
+		} else{
+			$('#cpt_'+ id_cpt).css('display', 'none');
+			$('#span_archiver').css('display', 'none');
 		}
-		$('#cpt').text('Sur '+ cpt +' restante(s)');
-		console.log('afficher_cpt : '+ cpt);
-		$('#span_archiver').css('display', 'block');
-		$('#liste_todo').insertBefore('#ajouter_tache');
 	}
 
 	function afficher_erreur(message, retour){
@@ -78,7 +85,7 @@
 
 		if(nouvelleTache != ""){
 			if($('#liste_todo')[0]) {
-				var cpt = compter_li('liste_todo')+1;
+				cpt = compter_li('liste_todo')+1;
 
 				$("#liste_todo li").each(function(i){
 					if( $(this).find("label").text().trim().split(" : ")[1] === nouvelleTache ){
@@ -93,10 +100,10 @@
 				});
 			} else {
 				cpt++;
-				ajouter_ul('liste_todo', 'en cours');
+				ajouter_ul('liste_todo', 'en cours', 'archiver_tache');
 			}
 			if($('#liste_todo')[0] && existence === false){
-				ajouter_tache(cpt, nouvelleTache, 'liste_todo');
+				ajouter_tache(cpt, nouvelleTache, 'liste_todo', 'liste_todo', 'archiver_tache');
 			}
 		} else {
 			alert("Veuillez saisir une tâche");
@@ -108,13 +115,13 @@
 		var existence = false;
 
 		if(!$('#liste_done')[0]){
-			ajouter_ul('liste_done', 'terminées');
+			ajouter_ul('liste_done', 'terminées', 'basculer_tache');
 		} else {
 			cpt = compter_li("liste_done");
 		}
 
 		$('input:checked[name=taches]').each(function() {
-			var checkbox_val = $(this).val(); 
+			var checkbox_val = $(this).val();
 
 			if($(this).parent('li').css('display') === 'none'){
 				return;
@@ -125,13 +132,13 @@
 						afficher_erreur("Cette tâche est déjà archivée !", "");
 						// alert('Cette tâche est déjà archivée 1 !');
 						// return;
-					} 
+					}
 				});
 
 				if(existence === false){
 					cpt++;
 					$(this).parent('li').css('display', 'none');
-				  	ajouter_tache(cpt, $(this).val(), 'liste_done');
+				  	ajouter_tache(cpt, $(this).val(), 'liste_done', 'liste_todo', 'basculer_tache');
 				}
 			}
 		});
